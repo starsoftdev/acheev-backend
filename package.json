@@ -1,0 +1,29 @@
+{
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Richard <richard_r.l@hotmail.com>",
+  "license": "none",
+  "scripts": {
+    "start": "node app",
+    "watch": "nodemon app && mongod"
+  },
+  "dependencies": {
+    "body-parser": "1.18.3",
+    "connect-flash": "^0.1.1",
+    "connect-mongo": "2.0.1",
+    "express": "^4.15.2",
+    "express-session": "^1.15.2",
+    "mongoose": "^4.9.8",
+    "nodemailer": "^4.6.7",
+    "nodemon": "^1.11.0"
+  },
+  "devDependencies": {
+    "eslint": "^5.3.0",
+    "eslint-config-google": "^0.9.1",
+    "eslint-config-standard": "^11.0.0",
+    "eslint-plugin-import": "^2.13.0",
+    "eslint-plugin-node": "^7.0.1",
+    "eslint-plugin-promise": "^3.8.0",
+    "eslint-plugin-standard": "^3.1.0"
+  }
+}
