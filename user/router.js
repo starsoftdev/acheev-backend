@@ -50,33 +50,40 @@ router.post('/forget', function (req, res, next) {
     },
     function (token, done) {
       User.findOne({email: req.body.email}, function (err, user) {
-        if (!user) {
+        if (!user || err) {
           req.flash('error', 'No account with that email address exists.')
           return res.redirect('/')
         }
+        console.log(111)
         user.resetPasswordToken = token
         user.resetPasswordExpires = Date.now() + 3600000 // 1 hour
-        resetUser = {
+        var resetUser = {
           resetPasswordToken: user.resetPasswordToken,
           resetPasswordExpires: user.resetPasswordExpires,
           email: user.email
         }
-        Reset.create(resetUser, function (error) {
+        Reset.update(resetUser, function (error) {
           if (error) {
             return next(error)
           }
+          done(err, token, user)
         })
       })
     },
     function (token, user, done) {
+      console.log(user.email)
       let smtpTransport = nodemailer.createTransport({
         host: 'smtp-mail.outlook.com',
+        auth: {
+          user: 'Richard@acheev.co',
+          pass: 'Richard@123'
+        },
         secureConnection: false // TLS requires secureConnection to be false
       })
-      console.log(user.email)
+
       let mailOptions = {
         to: user.email,
-        from: 'richard_r.l@hotmail.com',
+        from: 'Richard@acheev.co',
         subject: 'Node.js Password Reset',
         text: 'You are receiving this because you have requested the reset of the password for your account.\n\n' +
           'Please click on the following link, or paste this into your browser to complete the process:\n\n' +
@@ -90,6 +97,7 @@ router.post('/forget', function (req, res, next) {
       })
     }
   ], function (err) {
+    console.log(err)
     if (err) return next(err)
   })
 })
