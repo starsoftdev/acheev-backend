@@ -40,7 +40,6 @@ router.post('/reset/:token', function (req, res) {
   })
 })
 
-
 router.post('/forget', function (req, res, next) {
   async.waterfall([
     function (done) {
@@ -74,6 +73,7 @@ router.post('/forget', function (req, res, next) {
         host: 'smtp-mail.outlook.com',
         secureConnection: false // TLS requires secureConnection to be false
       })
+      console.log(user.email)
       let mailOptions = {
         to: user.email,
         from: 'richard_r.l@hotmail.com',
@@ -108,6 +108,7 @@ router.post('/login', function (req, res, next) {
         return next(err)
       } else {
         req.session.userId = user._id
+        req.session.email = req.body.logemail
         return res.redirect('/profile')
       }
     })
@@ -153,6 +154,8 @@ router.post('/register', function (req, res, next) {
 
 // GET route after registering
 router.get('/profile', function (req, res, next) {
+  console.log(req.session)
+  
   User.findById(req.session.userId)
     .exec(function (error, user) {
       if (error) {
@@ -181,24 +184,6 @@ router.get('/logout', function (req, res, next) {
       }
     })
   }
-})
-
-// GET for logout logout
-router.get('/logout', function (req, res, next) {
-  if (req.session) {
-    // delete session object
-    req.session.destroy(function (err) {
-      if (err) {
-        return next(err)
-      } else {
-        return res.redirect('/')
-      }
-    })
-  }
-})
-
-router.get('/subscription', function (req, res, next) {
-
 })
 
 module.exports = router

@@ -5,10 +5,10 @@ var mongoose = require('mongoose')
 var session = require('express-session')
 var MongoStore = require('connect-mongo')(session)
 var routes = require('./user/router')
+var payments = require('./user/payments')
 var flash = require('connect-flash')
-
 // connect to MongoDB
-mongoose.connect('mongodb://onlineplatform_mongodb_1/testForAuth')
+mongoose.connect('mongodb://acheev-backend_mongodb_1/testForAuth')
 var db = mongoose.connection
 
 // handle mongo error
@@ -17,15 +17,17 @@ db.once('open', function () {
   // we're connected!
 })
 
-// use sessions for tracking logins
-app.use(session({
+var sessions = session({
   secret: 'work hard',
   resave: true,
   saveUninitialized: false,
   store: new MongoStore({
     mongooseConnection: db
   })
-}))
+})
+// use sessions for tracking logins
+app.use(sessions)
+app.use(flash())
 
 // parse incoming requests
 app.use(bodyParser.json())
@@ -34,7 +36,7 @@ app.use(bodyParser.urlencoded({extended: false}))
 // serve static files from template
 app.use(express.static(__dirname + '/templateLogReg'))
 
-app.use(flash())
+app.use('/payments', payments)
 app.use('/', routes)
 
 // catch 404 and forward to error handler
