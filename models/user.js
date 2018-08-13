@@ -43,7 +43,6 @@ UserSchema.statics.authenticate = function (email, password, callback) {
         err.status = 401
         return callback(err)
       }
-      console.log('qwe')
       bcrypt.compare(password, user.password, function (err, result) {
         if (result === true) {
           return callback(null, user)
@@ -65,7 +64,6 @@ UserSchema.pre('save', function (next) {
     next()
   })
 })
-
 
 var User = mongoose.model('User', UserSchema)
 module.exports = User

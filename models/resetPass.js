@@ -8,7 +8,8 @@ var ResetSchema = new mongoose.Schema({
     trim: true
   },
   resetPasswordToken: String,
-  resetPasswordExpires: Date
+  resetPasswordExpires: Date,
+  createdAt: { type: Date, expires: 3600 }
 })
 
 var Reset = mongoose.model('Reset', ResetSchema)
