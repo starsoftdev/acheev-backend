@@ -4,9 +4,12 @@ var bodyParser = require('body-parser')
 var mongoose = require('mongoose')
 var session = require('express-session')
 var MongoStore = require('connect-mongo')(session)
-var routes = require('./user/router')
-var payments = require('./user/payments')
+var login = require('./modules/login')
+var payments = require('./modules/payments')
+var elearning = require('./modules/e-learning')
 var flash = require('connect-flash')
+var path = require('path')
+
 // connect to MongoDB
 mongoose.connect('mongodb://acheev-backend_mongodb_1/testForAuth')
 var db = mongoose.connection
@@ -34,12 +37,14 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended: false}))
 
 // serve static files from template
-app.use(express.static(__dirname + '/templateLogReg'))
+app.use(express.static(path.join(__dirname, '/views')))
 
 app.use('/payments', payments)
-app.use('/', routes)
+app.use('/e-learning', elearning)
 
-// catch 404 and forward to error handler
+app.use('/', login)
+
+// catch 404 and fologinto error handler
 app.use(function (req, res, next) {
   let err = new Error('File Not Found')
   err.status = 404
