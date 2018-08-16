@@ -9,11 +9,11 @@ var path = require('path')
 
 router.get('/reset/:token', function (req, res, next) {
   Reset.findOne({resetPasswordToken: req.params.token}, function (err, user) {
-    if (!user) {
+    if (!user || err) {
       req.flash('error', 'Password reset token is invalid or has expired.')
       return res.redirect('/')
     }
-    return res.sendFile(path.join(__dirname + '/../templateLogReg/forget.html'))
+    return res.sendFile(path.join(__dirname, '/../views/forget.html'))
   })
 })
 
@@ -21,7 +21,7 @@ router.post('/reset/:token', function (req, res) {
   async.waterfall([
     function (done) {
       Reset.findOne({resetPasswordToken: req.params.token}, function (err, user) {
-        if (!user) {
+        if (!user || err) {
           req.flash('error', 'Password reset token is invalid or has expired.')
           return res.redirect('back')
         }
@@ -73,7 +73,8 @@ router.post('/forget', function (req, res, next) {
     function (token, user, done) {
       console.log(user.email)
       let smtpTransport = nodemailer.createTransport({
-        host: 'smtp-mail.outlook.com',
+        service: 'Godaddy',
+        host: 'smtpout.secureserver.net',
         auth: {
           user: 'Richard@acheev.co',
           pass: 'Richard@123'
@@ -104,7 +105,7 @@ router.post('/forget', function (req, res, next) {
 
 // GET route for reading data
 router.get('/login', function (req, res, next) {
-  return res.sendFile(path.join(__dirname + '/templateLogReg/index.html'))
+  return res.sendFile(path.join(__dirname, '/views/index.html'))
 })
 
 router.post('/login', function (req, res, next) {
@@ -154,7 +155,7 @@ router.post('/register', function (req, res, next) {
       }
     })
   } else {
-    var err = new Error('All fields required.')
+    err = new Error('All fields required.')
     err.status = 400
     return next(err)
   }
@@ -163,7 +164,7 @@ router.post('/register', function (req, res, next) {
 // GET route after registering
 router.get('/profile', function (req, res, next) {
   console.log(req.session)
-  
+
   User.findById(req.session.userId)
     .exec(function (error, user) {
       if (error) {

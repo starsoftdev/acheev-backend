@@ -58,7 +58,7 @@ router.get('/', function (req, res) {
   })
 })
 
-router.get('/:id', function (req, res) {
+router.get('/:id', function (req, res, next) {
   var result
   var transactionId = req.params.id
   console.log(req.session)
@@ -70,21 +70,21 @@ router.get('/:id', function (req, res) {
 
     result = createResultObject(transaction)
     User.findById(req.session.userId)
-    .exec(function (error, user) {
-      if (error) {
-        return next(error)
-      } else {
-        if (user === null) {
-          let err = new Error('Not authorized! Go back!')
-          err.status = 400
-          return next(err)
+      .exec(function (error, user) {
+        if (error) {
+          return next(error)
         } else {
-          user.subscription = 'True'
-          user.subscription_expire = req.session.subscription_expire
-          user.save()
+          if (user === null) {
+            let err = new Error('Not authorized! Go back!')
+            err.status = 400
+            return next(err)
+          } else {
+            user.subscription = 'True'
+            user.subscription_expire = req.session.subscription_expire
+            user.save()
+          }
         }
-      }
-    })
+      })
     res.render('show.jade', {transaction: transaction, result: result})
   })
 })
