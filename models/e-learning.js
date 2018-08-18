@@ -1,20 +1,20 @@
 var mongoose = require('mongoose')
 
 var elearningSchema = new mongoose.Schema({
-  image: {
+  tutorialName: {
     type: String,
-    required: true,
-    trim: true
+    required: true
   },
-  tutiorialLength: {
+  tutorialLength: {
     type: String,
     unique: true,
     required: true,
     trim: true
   },
-  tutiorialName: {
+  image: {
     type: String,
-    required: true
+    required: true,
+    trim: true
   },
   author: {
     type: String,
@@ -33,7 +33,12 @@ var elearningSchema = new mongoose.Schema({
     required: true
   }
 })
-var lectureSchema = new mongoose.Schema({
+var tutorialSchema = new mongoose.Schema({
+  tutorialName: {
+    type: String,
+    required: true,
+    trim: true
+  },
   videos: {
     type: Array,
     required: true,
@@ -54,7 +59,7 @@ var lectureSchema = new mongoose.Schema({
 })
 
 var elearning = mongoose.model('Elearning', elearningSchema)
-var lecture = mongoose.model('Lecture', lectureSchema)
+var tutorial = mongoose.model('Tutorial', tutorialSchema)
 module.exports = {
   elearning,
   lecture
