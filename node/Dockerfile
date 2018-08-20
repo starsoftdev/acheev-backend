@@ -35,4 +35,8 @@ COPY scripts/run-nodock.sh /usr/bin/run-nodock
 
 RUN chmod 700 /usr/bin/run-nodock
 
+RUN cd ..
+
+RUN npm install bcrypt
+
 WORKDIR /opt/app
