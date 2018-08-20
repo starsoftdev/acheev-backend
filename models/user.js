@@ -23,6 +23,10 @@ var UserSchema = new mongoose.Schema({
     required: true,
     trim: true
   },
+  enrolledCourses: {
+    type: Array,
+    trim: true
+  },
   password: {
     type: String,
     required: true

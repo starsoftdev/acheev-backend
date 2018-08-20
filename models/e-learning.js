@@ -1,66 +1,57 @@
 var mongoose = require('mongoose')
 
-var elearningSchema = new mongoose.Schema({
-  tutorialName: {
+var lectureSchema = new mongoose.Schema({
+  lectureName: {
     type: String,
-    required: true
-  },
-  tutorialLength: {
-    type: String,
-    unique: true,
-    required: true,
+    // required: true,
     trim: true
   },
-  image: {
+  lectureLength: {
     type: String,
-    required: true,
-    trim: true
-  },
-  author: {
-    type: String,
-    required: true
-  },
-  staffPicked: {
-    type: Boolean,
-    required: true
-  },
-  dateCreated: {
-    type: Date,
-    required: true
-  },
-  dateModified: {
-    type: Date,
-    required: true
-  }
-})
-var tutorialSchema = new mongoose.Schema({
-  tutorialName: {
-    type: String,
-    required: true,
+    // required: true,
     trim: true
   },
   videos: {
     type: Array,
-    required: true,
+    // required: true,
+    trim: true
+  },
+  thumbnail: {
+    type: String,
+    // required: true,
     trim: true
   },
   description: {
     type: String,
-    required: true,
+    // required: true,
     trim: true
   },
   comments: {
     type: Array
   },
+  category: {
+    type: Number
+    // required: true
+  },
   relatedSkills: {
-    type: Array,
-    required: true
+    type: Array
+    // required: true
+  },
+  authorEmail: {
+    type: String
+    // required: true
+  },
+  dateCreated: {
+    type: Date
+    // required: true
+  },
+  dateModified: {
+    type: Date
+    // required: true
   }
 })
 
-var elearning = mongoose.model('Elearning', elearningSchema)
-var tutorial = mongoose.model('Tutorial', tutorialSchema)
+var lecture = mongoose.model('lectures', lectureSchema)
 module.exports = {
-  elearning,
   lecture
 }
