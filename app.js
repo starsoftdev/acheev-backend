@@ -7,6 +7,7 @@ var MongoStore = require('connect-mongo')(session)
 var login = require('./modules/login')
 var payments = require('./modules/payments')
 var elearning = require('./modules/e-learning')
+var videoUpload = require('./modules/videoUpload')
 var flash = require('connect-flash')
 var path = require('path')
 
@@ -41,6 +42,8 @@ app.use(express.static(path.join(__dirname, '/views')))
 
 app.use('/payments', payments)
 app.use('/e-learning', elearning)
+// Test for upload video, should goto other modules later
+app.use('/video', videoUpload)
 
 app.use('/', login)
 

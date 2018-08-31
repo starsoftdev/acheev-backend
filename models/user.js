@@ -27,9 +27,16 @@ var UserSchema = new mongoose.Schema({
     type: Array,
     trim: true
   },
+  servicePaid: {
+    type: Array,
+    trim: true
+  },
   password: {
     type: String,
     required: true
+  },
+  rating: {
+    type: Number
   },
   subscription: {
     type: String
