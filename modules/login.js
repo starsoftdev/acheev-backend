@@ -6,6 +6,7 @@ var async = require('async')
 var crypto = require('crypto')
 var nodemailer = require('nodemailer')
 var path = require('path')
+var build = process.env.NODE_ENV
 
 router.get('/reset/:token', function (req, res, next) {
   Reset.findOne({resetPasswordToken: req.params.token}, function (err, user) {
@@ -54,7 +55,6 @@ router.post('/forget', function (req, res, next) {
           req.flash('error', 'No account with that email address exists.')
           return res.redirect('/')
         }
-        console.log(111)
         user.resetPasswordToken = token
         user.resetPasswordExpires = Date.now() + 3600000 // 1 hour
         var resetUser = {
@@ -107,20 +107,32 @@ router.post('/forget', function (req, res, next) {
 router.get('/login', function (req, res, next) {
   return res.sendFile(path.join(__dirname, '/views/index.html'))
 })
-
+let err = ''
 router.post('/login', function (req, res, next) {
   if (req.body.logemail && req.body.logpassword) {
     User.authenticate(req.body.logemail, req.body.logpassword, function (error, user) {
-      if (error || !user) {
-        let err = new Error('Wrong email or password.')
-        err.status = 401
-        return next(err)
+      if (build === 'prod') {
+        if (error || !user) {
+          res.sendStatus(401)
+        } else {
+          req.session.userId = user._id
+          req.session.email = req.body.logemail
+          res.sendStatus(200)
+        }
       } else {
-        req.session.userId = user._id
-        req.session.email = req.body.logemail
-        return res.redirect('/profile')
+        if (error || !user) {
+          let err = new Error('Wrong email or password.')
+          err.status = 401
+          return next(err)
+        } else {
+          req.session.userId = user._id
+          req.session.email = req.body.logemail
+          return res.redirect('/profile')
+        }
       }
     })
+  } else {
+    res.sendStatus(400)
   }
 })
 

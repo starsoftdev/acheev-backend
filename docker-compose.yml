@@ -12,6 +12,8 @@ services:
                 - YARN=false
         volumes:
             - ./:/opt/app
+        environment:
+            - NODE_ENV=prod
         entrypoint: run-nodock "nodemon -L --watch ./ app.js"
         tty: true
         ports: 
