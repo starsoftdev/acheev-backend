@@ -1,12 +1,11 @@
 var mongoose = require('mongoose')
 
 var freeLanceSchema = new mongoose.Schema({
-  freeLanceName: {
+  authorEmail: {
     type: String,
-    // required: true,
-    trim: true
+    required: true
   },
-  freeLanceLength: {
+  freeLanceName: {
     type: String,
     // required: true,
     trim: true
@@ -43,10 +42,6 @@ var freeLanceSchema = new mongoose.Schema({
   },
   relatedSkills: {
     type: Array
-    // required: true
-  },
-  authorEmail: {
-    type: String
     // required: true
   },
   dateCreated: {
