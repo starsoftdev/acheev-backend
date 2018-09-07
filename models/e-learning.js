@@ -1,6 +1,10 @@
 var mongoose = require('mongoose')
 
 var lectureSchema = new mongoose.Schema({
+  authorEmail: {
+    type: String,
+    required: true
+  },
   lectureName: {
     type: String,
     // required: true,
@@ -35,10 +39,6 @@ var lectureSchema = new mongoose.Schema({
   },
   relatedSkills: {
     type: Array
-    // required: true
-  },
-  authorEmail: {
-    type: String
     // required: true
   },
   dateCreated: {

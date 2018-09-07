@@ -31,18 +31,113 @@ var UserSchema = new mongoose.Schema({
     type: Array,
     trim: true
   },
-  password: {
+  skills: {
+    type: Array,
+    trim: true
+  },
+  certifcations: {
+    type: Array,
+    trim: true
+  },
+  organization: {
     type: String,
     required: true
   },
-  rating: {
-    type: Number
+  password: {
+    type: String,
+    required: true
   },
   subscription: {
     type: String
   },
   subscription_expire: {
     type: Date
+  }
+})
+
+var SocialMediaSchema = new mongoose.Schema({
+  email: {
+    type: String,
+    unique: true,
+    trim: true
+  },
+  facebook: {
+    type: String,
+    unique: true,
+    trim: true
+  },
+  linkedin: {
+    type: String,
+    unique: true,
+    trim: true
+  },
+  twitter: {
+    type: String,
+    unique: true,
+    trim: true
+  },
+  personalWebsite: {
+    type: String,
+    unique: true,
+    trim: true
+  }
+})
+
+var UserRatingSchema = new mongoose.Schema({
+  email: {
+    type: String,
+    unique: true,
+    trim: true
+  },
+  overAll: {
+    type: Number,
+    unique: true,
+    trim: true
+  },
+  communication: {
+    type: Number,
+    unique: true,
+    trim: true
+  },
+  serviceIntegrity: {
+    type: Number,
+    unique: true,
+    trim: true
+  },
+  wouldRecommand: {
+    type: Number,
+    unique: true,
+    trim: true
+  }
+})
+
+var AddressSchema = new mongoose.Schema({
+  email: {
+    type: String,
+    unique: true,
+    required: true,
+    trim: true
+  },
+  home: {
+    type: String,
+    unique: true,
+    required: true,
+    trim: true
+  },
+  city: {
+    type: String,
+    required: true,
+    trim: true
+  },
+  state: {
+    type: String,
+    required: true,
+    trim: true
+  },
+  zipCode: {
+    type: Boolean,
+    default: 0,
+    trim: true
   }
 })
 
@@ -79,5 +174,13 @@ UserSchema.pre('save', function (next) {
   })
 })
 
+var SocialMedia = mongoose.model('socialMedia', SocialMediaSchema)
 var User = mongoose.model('User', UserSchema)
-module.exports = User
+var Address = mongoose.model('Address', AddressSchema)
+var UserRating = mongoose.model('UserRating', UserRatingSchema)
+module.exports = {
+  User,
+  Address,
+  UserRating,
+  SocialMedia
+}
