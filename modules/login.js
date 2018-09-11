@@ -7,6 +7,7 @@ var crypto = require('crypto')
 var nodemailer = require('nodemailer')
 var path = require('path')
 var build = process.env.NODE_ENV
+var utils = require('./utils')
 
 router.get('/reset/:token', function (req, res, next) {
   Reset.findOne({resetPasswordToken: req.params.token}, function (err, user) {
@@ -173,25 +174,79 @@ router.post('/register', function (req, res, next) {
   }
 })
 
+// **** NEED TO REFACTOR MORE
 // GET route after registering
-router.get('/profile', function (req, res, next) {
-  console.log(req.session)
-
-  User.findById(req.session.userId)
-    .exec(function (error, user) {
-      if (error) {
-        return next(error)
-      } else {
-        if (user === null) {
-          let err = new Error('Not authorized! Go back!')
-          err.status = 400
-          return next(err)
+if (build === 'prod') {
+  // api/profile?email=test&firstname%lastname
+  router.get('/profile', function (req, res, next) {
+    if (!req.query.email) {
+      err = new Error('Email not found.')
+      err.status = 400
+      return next(err)
+    }
+    let userEmail = req.query.email
+    delete req.query.email
+    try {
+      utils.modifyOrCreateFields(userEmail, req.query)
+    } catch (err) {
+      return next(err)
+    }
+  })
+} else {
+  router.get('/profile', function (req, res, next) {
+    console.log(req.session)
+    User.findById(req.session.userId)
+      .exec(function (error, user) {
+        if (error) {
+          return next(error)
         } else {
-          return res.send('<h1>Name: </h1>' + user.firstname + '<h2>Mail: </h2>' + user.email + '<br><a type="button" href="/logout">Logout</a>')
+          if (user === null) {
+            let err = new Error('Not authorized! Go back!')
+            err.status = 400
+            return next(err)
+          } else {
+            return res.send('<h1>Name: </h1>' + user.firstname + '<h2>Mail: </h2>' + user.email + '<br><a type="button" href="/logout">Logout</a>')
+          }
         }
-      }
-    })
-})
+      })
+  })
+}
+// GET route after registering
+if (build === 'prod') {
+// api/profile?email=test&firstname%lastname
+  router.post('/profile', function (req, res, next) {
+    if (!req.query.email) {
+      err = new Error('Email not found.')
+      err.status = 400
+      return next(err)
+    }
+    let userEmail = req.query.email
+    try {
+      utils.modifyOrCreateFields(userEmail, req.body)
+    } catch (err) {
+      return next(err)
+    }
+  })
+} else {
+  router.post('/profile', function (req, res, next) {
+    console.log(req.session)
+
+    User.findById(req.session.userId)
+      .exec(function (error, user) {
+        if (error) {
+          return next(error)
+        } else {
+          if (user === null) {
+            let err = new Error('Not authorized! Go back!')
+            err.status = 400
+            return next(err)
+          } else {
+            return res.send('<h1>Name: </h1>' + user.firstname + '<h2>Mail: </h2>' + user.email + '<br><a type="button" href="/logout">Logout</a>')
+          }
+        }
+      })
+  })
+}
 
 // GET for logout logout
 router.get('/logout', function (req, res, next) {
