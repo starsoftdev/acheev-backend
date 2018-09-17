@@ -5,47 +5,34 @@ var UserSchema = new mongoose.Schema({
   email: {
     type: String,
     unique: true,
-    required: true,
+    // required: true,
     trim: true
   },
   firstname: {
     type: String,
-    required: true,
+    // required: true,
     trim: true
   },
   lastname: {
     type: String,
-    required: true,
+    // required: true,
     trim: true
   },
   admin: {
     type: Boolean,
-    default: 0,
-    trim: true
-  },
-  enrolledCourses: {
-    type: Array,
-    trim: true
-  },
-  servicePaid: {
-    type: Array,
-    trim: true
-  },
-  skills: {
-    type: Array,
-    trim: true
+    default: false
   },
   certifcations: {
     type: Array,
     trim: true
   },
   organization: {
-    type: String,
-    required: true
+    type: String
+    // required: true
   },
   password: {
-    type: String,
-    required: true
+    type: String
+    // required: true
   },
   subscription: {
     type: String
@@ -115,28 +102,67 @@ var AddressSchema = new mongoose.Schema({
   email: {
     type: String,
     unique: true,
-    required: true,
+    // required: true,
     trim: true
   },
   home: {
     type: String,
     unique: true,
-    required: true,
+    // required: true,
     trim: true
   },
   city: {
     type: String,
-    required: true,
+    // required: true,
     trim: true
   },
   state: {
     type: String,
-    required: true,
+    // required: true,
     trim: true
   },
   zipCode: {
     type: Boolean,
     default: 0,
+    trim: true
+  }
+})
+
+var EnrolledCoursesSchema = new mongoose.Schema({
+  email: {
+    type: String,
+    unique: true,
+    // required: true,
+    trim: true
+  },
+  enrolledCourses: {
+    type: Array,
+    trim: true
+  }
+})
+
+var ServicePaidSchema = new mongoose.Schema({
+  email: {
+    type: String,
+    unique: true,
+    // required: true,
+    trim: true
+  },
+  servicePaid: {
+    type: Array,
+    trim: true
+  }
+})
+
+var SkillSchema = new mongoose.Schema({
+  email: {
+    type: String,
+    unique: true,
+    // required: true,
+    trim: true
+  },
+  skills: {
+    type: Array,
     trim: true
   }
 })
@@ -160,11 +186,12 @@ UserSchema.statics.authenticate = function (email, password, callback) {
         }
       })
     })
-};
+}
 
 // hashing a password before saving it to the database
 UserSchema.pre('save', function (next) {
   let user = this
+  console.log(user)
   bcrypt.hash(user.password, 10, function (err, hash) {
     if (err) {
       return next(err)
@@ -174,13 +201,19 @@ UserSchema.pre('save', function (next) {
   })
 })
 
-var SocialMedia = mongoose.model('socialMedia', SocialMediaSchema)
+var SocialMedia = mongoose.model('SocialMedia', SocialMediaSchema)
 var User = mongoose.model('User', UserSchema)
 var Address = mongoose.model('Address', AddressSchema)
 var UserRating = mongoose.model('UserRating', UserRatingSchema)
+var EnrolledCourses = mongoose.model('Enrolled', EnrolledCoursesSchema)
+var ServicePaid = mongoose.model('Service', ServicePaidSchema)
+var Skill = mongoose.model('Skill', SkillSchema)
 module.exports = {
   User,
   Address,
   UserRating,
-  SocialMedia
+  SocialMedia,
+  EnrolledCourses,
+  ServicePaid,
+  Skill
 }
