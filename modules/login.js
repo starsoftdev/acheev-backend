@@ -227,7 +227,7 @@ if (build === 'prod') {
       //   serviceIntegrity,
       //   wouldRecommand
       // })
-
+      res.statusCode = 200
       res.send(userProfile)
     } catch (err) {
       return next(err)
