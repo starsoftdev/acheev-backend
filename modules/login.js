@@ -128,7 +128,7 @@ router.post('/login', function (req, res, next) {
         } else {
           req.session.userId = user._id
           req.session.email = req.body.logemail
-          return res.redirect('/account')
+          return res.redirect('/profile')
         }
       }
     })
@@ -173,7 +173,7 @@ if (build === 'prod') {
           return next(error)
         } else {
           req.session.userId = user._id
-          return res.redirect('/account')
+          return res.redirect('/profile')
         }
       })
     } else {
@@ -187,8 +187,8 @@ if (build === 'prod') {
 // **** NEED TO REFACTOR MORE
 // GET route after registering
 if (build === 'prod') {
-  // api/account?email=test&account
-  router.get('/account', async function (req, res, next) {
+  // api/profile?email=test&account
+  router.get('/profile', async function (req, res, next) {
     console.log('qwe')
     if (!req.query.email) {
       err = new Error('Email not found.')
@@ -227,14 +227,13 @@ if (build === 'prod') {
       //   serviceIntegrity,
       //   wouldRecommand
       // })
-      res.statusCode = 200
       res.send(userProfile)
     } catch (err) {
       return next(err)
     }
   })
 } else {
-  router.get('/account', function (req, res, next) {
+  router.get('/profile', function (req, res, next) {
     console.log(req.session)
     User.findById(req.session.userId)
       .exec(function (error, user) {
@@ -254,8 +253,8 @@ if (build === 'prod') {
 }
 // GET route after registering
 if (build === 'prod') {
-// api/account?email=test&firstname%lastname
-  router.post('/account', function (req, res, next) {
+// api/profile?email=test&firstname%lastname
+  router.post('/profile', function (req, res, next) {
     console.log(req.body)
     if (!req.query.email) {
       err = new Error('Email not found.')
@@ -274,7 +273,7 @@ if (build === 'prod') {
     }
   })
 } else {
-  router.post('/account', function (req, res, next) {
+  router.post('/profile', function (req, res, next) {
     console.log(req.session)
 
     User.findById(req.session.userId)
