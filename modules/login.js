@@ -1,6 +1,6 @@
 var express = require('express')
 var router = express.Router()
-var User = require('../models/user')
+var User = require('../models/user').User
 var Reset = require('../models/resetPass')
 var async = require('async')
 var crypto = require('crypto')
@@ -137,48 +137,59 @@ router.post('/login', function (req, res, next) {
   }
 })
 
+if (build === 'prod') {
 // POST route for updating data
-router.post('/register', function (req, res, next) {
+  router.post('/register', function (req, res, next) {
   // confirm that user typed same password twice
-  if (req.body.password !== req.body.passwordConf) {
-    var err = new Error('Passwords do not match.')
-    err.status = 400
-    res.send('passwords dont match')
-    return next(err)
-  }
+    utils.createDocument(req.query.index, req.body)
+    res.statusCode = 200
+    res.end()
+  })
+} else {
+  // POST route for updating data
+  router.post('/register', function (req, res, next) {
+  // confirm that user typed same password twice
+    if (req.body.password !== req.body.passwordConf) {
+      var err = new Error('Passwords do not match.')
+      err.status = 400
+      res.send('passwords dont match')
+      return next(err)
+    }
 
-  if (req.body.email &&
+    if (req.body.email &&
     req.body.firstname &&
     req.body.lastname &&
     req.body.password &&
     req.body.passwordConf) {
-    let userData = {
-      email: req.body.email,
-      firstname: req.body.firstname,
-      lastname: req.body.lastname,
-      password: req.body.password
-    }
-
-    User.create(userData, function (error, user) {
-      if (error) {
-        return next(error)
-      } else {
-        req.session.userId = user._id
-        return res.redirect('/profile')
+      let userData = {
+        email: req.body.email,
+        firstname: req.body.firstname,
+        lastname: req.body.lastname,
+        password: req.body.password
       }
-    })
-  } else {
-    err = new Error('All fields required.')
-    err.status = 400
-    return next(err)
-  }
-})
+
+      User.create(userData, function (error, user) {
+        if (error) {
+          return next(error)
+        } else {
+          req.session.userId = user._id
+          return res.redirect('/profile')
+        }
+      })
+    } else {
+      err = new Error('All fields required.')
+      err.status = 400
+      return next(err)
+    }
+  })
+}
 
 // **** NEED TO REFACTOR MORE
 // GET route after registering
 if (build === 'prod') {
-  // api/profile?email=test&firstname%lastname
-  router.get('/profile', function (req, res, next) {
+  // api/profile?email=test&account
+  router.get('/profile', async function (req, res, next) {
+    console.log('qwe')
     if (!req.query.email) {
       err = new Error('Email not found.')
       err.status = 400
@@ -186,8 +197,38 @@ if (build === 'prod') {
     }
     let userEmail = req.query.email
     delete req.query.email
+    console.log(req.query)
     try {
-      utils.modifyOrCreateFields(userEmail, req.query)
+      res.setHeader('Content-Type', 'application/json')
+      let userProfile = {email: userEmail}
+      Object.assign(userProfile, await utils.getFields(userEmail, Object.keys(req.query)))
+      console.log(userProfile)
+      // const {firstname, lastname, avatar, joinDate, tagline, description, organizations} = req.query
+      // userProfile['account'] = await utils.getFields(userEmail, 'account', {
+      //   firstname,
+      //   lastname,
+      //   avatar,
+      //   joinDate,
+      //   tagline,
+      //   description,
+      //   organizations
+      // })
+      // const {home, city, state, zip} = req.query
+      // userProfile['address'] = await utils.getFields(userEmail, 'address', {
+      //   home,
+      //   city,
+      //   state,
+      //   zip
+      // })
+      // const {overAll, communication, serviceIntegrity, wouldRecommand} = req.query
+      // userProfile['userRating'] = await utils.getFields(userEmail, 'userRating', {
+      //   overAll,
+      //   communication,
+      //   serviceIntegrity,
+      //   wouldRecommand
+      // })
+
+      res.send(userProfile)
     } catch (err) {
       return next(err)
     }
@@ -215,14 +256,19 @@ if (build === 'prod') {
 if (build === 'prod') {
 // api/profile?email=test&firstname%lastname
   router.post('/profile', function (req, res, next) {
+    console.log(req.body)
     if (!req.query.email) {
       err = new Error('Email not found.')
       err.status = 400
       return next(err)
     }
     let userEmail = req.query.email
+    let curIndex = req.query.index
+    console.log(req.query)
     try {
-      utils.modifyOrCreateFields(userEmail, req.body)
+      // Rework this
+      utils.modifyOrCreateFields(userEmail, curIndex, req.body)
+      res.status(200).end()
     } catch (err) {
       return next(err)
     }

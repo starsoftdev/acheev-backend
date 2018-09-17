@@ -59,7 +59,7 @@ router.post('/join', function (req, res, next) {
       user.enrolledCourses.push(lectureName)
       user.save()
       res.status = 200
-      return res.send('succuess')
+      return res.send('success')
     }
   })
 })
